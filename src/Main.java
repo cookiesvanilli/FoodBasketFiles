@@ -8,47 +8,47 @@ public class Main {
         String[] productName = {"Bread", "Apples", "Milk"};
         int[] prices = {100, 200, 300};
 
-        File file = new File("basket.txt");
+        File binFile = new File("basket.bin");
         Basket basket = new Basket(productName, prices);
 
-        if (file.exists()) {
-            Basket.loadFromTxtFile(file);
+        if (binFile.exists()) {
+            Basket.loadFromBinFile(binFile);
         } else {
             basket.printAllProducts();
+
+            while (true) {
+                System.out.println("Select the product and quantity or enter `end`");
+                String input = scan.nextLine();
+                if ("end".equals(input)) {
+                    break;
+                }
+
+                String[] productAndCount = input.split(" ");
+                int productNum;
+                try {
+                    productNum = Integer.parseInt(productAndCount[0]) - 1;
+                } catch (NumberFormatException e) {
+                    System.out.println("Number format!!!");
+                    continue;
+                }
+
+                int productAmount;
+                try {
+                    productAmount = Integer.parseInt(productAndCount[1]);
+                } catch (NumberFormatException e) {
+                    System.out.println("Number format!!!");
+                    continue;
+                }
+
+                if (productAmount > productName.length || productAmount <= 0) {
+                    System.out.println("This product is not exist!!!");
+                    continue;
+                }
+
+                basket.addToCart(productNum, productAmount);
+            }
+            basket.saveBin(binFile);
+            basket.printCart();
         }
-
-        while (true) {
-            System.out.println("Select the product and quantity or enter `end`");
-            String input = scan.nextLine();
-            if ("end".equals(input)) {
-                break;
-            }
-
-            String[] productAndCount = input.split(" ");
-            int productNum;
-            try {
-                productNum = Integer.parseInt(productAndCount[0]) - 1;
-            } catch (NumberFormatException e) {
-                System.out.println("Number format!!!");
-                continue;
-            }
-
-            int productAmount;
-            try {
-                productAmount = Integer.parseInt(productAndCount[1]);
-            } catch (NumberFormatException e) {
-                System.out.println("Number format!!!");
-                continue;
-            }
-
-            if (productAmount > productName.length || productAmount <= 0) {
-                System.out.println("This product is not exist!!!");
-                continue;
-            }
-
-            basket.addToCart(productNum, productAmount);
-        }
-        basket.saveText(file);
-        basket.printCart();
     }
 }
